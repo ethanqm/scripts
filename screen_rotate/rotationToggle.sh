@@ -7,71 +7,69 @@
 # --------------
 
 state=($(kscreen-doctor -o | grep Rotation ))
-#for word in "${state[@]}"; do
-#  echo "word: $word"
-#done
 l_dirty=${state[2]} # has ANSI colors at the start
 r_dirty=${state[5]} # has ANSI colors at the start
-l=${l_dirty:6:1} # left screen rotation state
-r=${r_dirty:6:1} # right screen rotation state
+# only take last character
+l_screen_rot=${l_dirty:6:1}
+r_screen_rot=${r_dirty:6:1}
 
-#echo "L: $l"
-#echo "R: $r"
+left_screen="DP-3"
+right_screen="HDMI-A-1"
 
+# right screen position depends on both screens' rotation
 function setHorzHorz () {
-	kscreen-doctor output.DP-3.rotation.none
-	kscreen-doctor output.HDMI-A-1.rotation.none
-	kscreen-doctor output.DP-3.position.0,0
-	kscreen-doctor output.HDMI-A-1.position.1920,0
+	kscreen-doctor output.$left_screen.rotation.none \
+	  output.$right_screen.rotation.none \
+	  output.$left_screen.position.0,0 \
+	  output.$right_screen.position.1920,0
 }
 function setVertHorz () {
-	kscreen-doctor output.DP-3.rotation.left
-	kscreen-doctor output.HDMI-A-1.rotation.none
-	kscreen-doctor output.DP-3.position.0,0
-	kscreen-doctor output.HDMI-A-1.position.1080,420
+	kscreen-doctor output.$left_screen.rotation.left \
+	  output.$right_screen.rotation.none \
+	  output.$left_screen.position.0,0 \
+	  output.$right_screen.position.1080,420
 }
 function setHorzVert () {
-	kscreen-doctor output.DP-3.rotation.none
-	kscreen-doctor output.HDMI-A-1.rotation.left # change when longer cable
-	kscreen-doctor output.DP-3.position.0,0
-	kscreen-doctor output.HDMI-A-1.position.1920,-420
+	kscreen-doctor output.$left_screen.rotation.none \
+	  output.$right_screen.rotation.left \ # change when longer cable 
+	  output.$left_screen.position.0,0 \
+	  output.$right_screen.position.1920,-420
 }
 
 function setVertVert () {
-	kscreen-doctor output.DP-3.rotation.left
-	kscreen-doctor output.HDMI-A-1.rotation.left # change when longer cable
-	kscreen-doctor output.DP-3.position.0,0
-	kscreen-doctor output.HDMI-A-1.position.1080,0
+	kscreen-doctor output.$left_screen.rotation.left \
+	  output.$right_screen.rotation.left \ # change when longer cable
+	  output.$left_screen.position.0,0 \
+	  output.$right_screen.position.1080,0
 }
 
+# screen rotation vales; 1: horizontal, 2: left
 function toggleLeftScreen () {
-	# $l or $r: 1 means horizontal, 2 means rotate left
-	case $l in 
-		1) case $r in 
+	case $l_screen_rot in 
+		1) case $r_screen_rot in 
 			1) setVertHorz ;; # | -
 			2) setVertVert ;; # | |
 		   esac ;;
-		2) case $r in
+		2) case $r_screen_rot in
 			1) setHorzHorz ;;  # - -
 			2) setHorzVert ;;  # - |
-			*) notify-send "weird r value: $r"
+			*) notify-send "bad right screen rotation: r_screen_rot"
 		   esac ;;
-	  *) notify-send "weird l value: $l r: $r"
+	  *) notify-send "bad screen rotation left: l_screen_rot right: r_screen_rot"
   esac
 }
 function toggleRightScreen () {
-	# $l or $r: 1 means horizontal, 2 means rotate left
-	case $r in 
-		1) case $l in 
+	case $r_screen_rot in 
+		1) case $l_screen_rot in 
 			1) setHorzVert ;; # - |
 			2) setVertVert ;; # | |
 			 esac ;;
-		2) case $l in
+		2) case $l_screen_rot in
 			1) setHorzHorz ;;  # - -
 			2) setVertHorz ;;  # | -
-			*) notify-send "weird l value: $l"
+			*) notify-send "bad left screen rotation: l_screen_rot"
 		   esac ;;
-	  *) notify-send "weird r value: $r l: $l"
+	  *) notify-send "bad screen rotation right: r_screen_rot left: l_screen_rot"
   esac
 }
 

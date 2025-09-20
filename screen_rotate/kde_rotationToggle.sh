@@ -20,10 +20,11 @@ IFS=$"\s"
 # indecies weird, don't sweat
 first_rotation=${state[1]:8:1}
 second_rotation=${state[2]:8:1}
+
 l_screen_rot=$([[ $first_screen =~ $left_screen ]] &&
-echo $first_rotation || echo $second_rotation )
+	echo $first_rotation || echo $second_rotation )
 r_screen_rot=$([[ $first_screen =~ $right_screen ]] &&
-echo $first_rotation || echo $second_rotation )
+	echo $first_rotation || echo $second_rotation )
 
 
 
@@ -46,7 +47,6 @@ function setHorzVert () {
   kscreen-doctor output.$left_screen.position.0,0 \
     output.$right_screen.position.1920,-420
 }
-
 function setVertVert () {
   kscreen-doctor output.$left_screen.rotation.left \
     output.$right_screen.rotation.right

@@ -42,10 +42,14 @@ r_screen_rot=$(labelScreens)
 function setHorz () {
   kscreen-doctor output.$right_screen.rotation.none 
   kscreen-doctor output.$right_screen.position.1920,0
+  kscreen-doctor output.$left_screen.position.0,0
+  kscreen-doctor output.$bottom_screen.position.0,1080
 }
 function setVert () {
   kscreen-doctor output.$right_screen.rotation.right
   kscreen-doctor output.$right_screen.position.1920,-420
+  kscreen-doctor output.$left_screen.position.0,0
+  kscreen-doctor output.$bottom_screen.position.0,1080
 }
 
 # screen rotation vales; 1: horizontal, 2: left, 8 right
